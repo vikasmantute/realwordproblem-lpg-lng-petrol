@@ -2,6 +2,12 @@
 
 > **Solving the Real-World Problem of Fuel Crowd, Panic Buying & Supply Crisis from the Consumer's Perspective**
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-energy--panic--solution--management--demo.netlify.app-orange?style=for-the-badge&logo=netlify)](https://energy-panic-solution-management-demo.netlify.app/)
+[![Prototype](https://img.shields.io/badge/Status-Prototype%20%2F%20Educational-blue?style=for-the-badge)](https://energy-panic-solution-management-demo.netlify.app/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green?style=for-the-badge&logo=node.js)](https://nodejs.org)
+
+🔗 **Live Preview:** [https://energy-panic-solution-management-demo.netlify.app/](https://energy-panic-solution-management-demo.netlify.app/)
+
 ---
 
 ## ⚠️ Disclaimer

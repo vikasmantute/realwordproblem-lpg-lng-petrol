@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- Public pages -->
+  <url>
+    <loc>https://energy-panic-solution-management-demo.netlify.app/</loc>
+    <lastmod>2026-03-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://energy-panic-solution-management-demo.netlify.app/about</loc>
+    <lastmod>2026-03-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Auth pages -->
+  <url>
+    <loc>https://energy-panic-solution-management-demo.netlify.app/auth/login</loc>
+    <lastmod>2026-03-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://energy-panic-solution-management-demo.netlify.app/auth/register</loc>
+    <lastmod>2026-03-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Fuel service pages (login required — listed for SEO awareness) -->
+  <url>
+    <loc>https://energy-panic-solution-management-demo.netlify.app/dashboard</loc>
+    <lastmod>2026-03-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://energy-panic-solution-management-demo.netlify.app/petrol/pumps</loc>
+    <lastmod>2026-03-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://energy-panic-solution-management-demo.netlify.app/cng/stations</loc>
+    <lastmod>2026-03-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://energy-panic-solution-management-demo.netlify.app/lpg/book</loc>
+    <lastmod>2026-03-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://energy-panic-solution-management-demo.netlify.app/booking/all</loc>
+    <lastmod>2026-03-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+</urlset>
