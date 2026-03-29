@@ -1,12 +1,16 @@
 [build]
-  base    = "consumer-app"
-  command = "npm run build"
-  publish = "public"
+  base      = "consumer-app"
+  command   = "npm install && npm run build"
+  publish   = "public"
   functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18"
-  NETLIFY = "true"
+  NETLIFY      = "true"
+
+[functions]
+  node_bundler   = "zisi"
+  included_files = ["views/**", "data/**", "helpers/**", "middleware/**", "routes/**"]
 
 [[redirects]]
   from   = "/css/*"
