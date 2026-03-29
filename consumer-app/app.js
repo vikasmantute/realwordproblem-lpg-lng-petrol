@@ -8,8 +8,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ─── View Engine ───────────────────────────────────────────────
+// APP_VIEWS_DIR is set by netlify/functions/server.js when running serverless
+// so __dirname-based path works in both local dev and Netlify
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', process.env.APP_VIEWS_DIR || path.join(__dirname, 'views'));
 
 // ─── Static Files ──────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));

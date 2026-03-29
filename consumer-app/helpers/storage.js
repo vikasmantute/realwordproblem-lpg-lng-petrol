@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const DATA_DIR = path.join(__dirname, '../data');
+// APP_DATA_DIR is set by netlify/functions/server.js when running serverless
+const DATA_DIR = process.env.APP_DATA_DIR || path.join(__dirname, '../data');
 
 // On Netlify/serverless, fs writes go to /tmp (writable, ephemeral)
 const IS_SERVERLESS = process.env.NETLIFY === 'true' || process.env.AWS_LAMBDA_FUNCTION_NAME;

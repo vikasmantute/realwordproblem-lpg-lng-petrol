@@ -11,7 +11,7 @@
 [functions]
   node_bundler          = "esbuild"
   external_node_modules = ["ejs", "bcryptjs", "qrcode", "uuid", "express-session", "connect-flash", "body-parser"]
-  included_files        = ["../../views/**", "../../data/**"]
+  included_files        = ["views/**", "data/**"]
 
 [[redirects]]
   from   = "/css/*"
