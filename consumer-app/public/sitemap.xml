@@ -4,6 +4,13 @@
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
+  <url>
+    <loc>https://energy-panic-solution-management-demo.netlify.app/blog/how-technology-solves-fuel-panic.html</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
   <!-- Public pages -->
   <url>
     <loc>https://energy-panic-solution-management-demo.netlify.app/</loc>
