@@ -318,8 +318,8 @@ npm run build:watch
 
 | Field | Value |
 |-------|-------|
-| Mobile | `9876543210` |
-| Password | `password123` |
+| Mobile | `0000000000` |
+| Password | `0000000000` |
 
 ---
 
