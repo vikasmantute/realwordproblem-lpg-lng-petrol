@@ -1,0 +1,114 @@
+<%- include('../layout/header') %>
+
+<div class="max-w-3xl mx-auto px-4 py-12">
+  <!-- Hero -->
+  <div class="text-center mb-12">
+    <div class="w-16 h-16 gradient-brand rounded-2xl flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">F</div>
+    <h1 class="text-3xl font-bold text-slate-800 mb-3">FuelEco Platform</h1>
+    <p class="text-slate-500 leading-relaxed max-w-lg mx-auto">
+      A crisis-resilient digital infrastructure for India's fuel and energy distribution network —
+      built for real-world scarcity, panic, and equitable access.
+    </p>
+  </div>
+
+  <!-- Problem Statement -->
+  <div class="bg-orange-50 border border-orange-100 rounded-2xl p-6 mb-8">
+    <h2 class="font-bold text-slate-800 text-lg mb-3">The Real-World Problem</h2>
+    <p class="text-slate-600 text-sm leading-relaxed mb-3">
+      Energy crises — whether from geopolitical conflicts like the Iran-Iraq war, domestic supply chain breakdowns, or panic-driven hoarding — 
+      cause disproportionate harm to ordinary citizens. Long queues, black-market exploitation, and information asymmetry hurt lower-income 
+      households the most.
+    </p>
+    <p class="text-slate-600 text-sm leading-relaxed">
+      FuelEco addresses this by creating a transparent, digital-first pre-booking and queue management system that ensures 
+      fair allocation based on verified need — not physical proximity to a fuel pump.
+    </p>
+  </div>
+
+  <!-- Features -->
+  <div class="grid sm:grid-cols-2 gap-4 mb-8">
+    <%
+    const features = [
+      { icon: '📶', title: 'Virtual Queue System', desc: 'Pre-book slots digitally. Your position in queue is guaranteed. No physical waiting.' },
+      { icon: '🔒', title: 'QR Entry Tokens', desc: 'Cryptographically unique QR codes prevent double-booking and queue jumping.' },
+      { icon: '🔵', title: 'LPG Delayed Confirmation', desc: 'Smart stock-aware booking confirmations based on real distributor inventory levels.' },
+      { icon: '⚡', title: '6-Level Crisis Mode', desc: 'Platform adapts booking limits, rationing rules, and UI alerts based on crisis severity.' },
+      { icon: '🏭', title: 'City Warehouse Allocation', desc: 'Backend allocation engine distributes fuel across city distributors, reducing hoarding.' },
+      { icon: '💚', title: 'Priority for Vulnerable', desc: 'PMUY/BPL consumers get P1 priority. Medical/emergency vehicles get instant confirmation.' }
+    ];
+    %>
+    <% features.forEach(f => { %>
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 flex gap-3">
+      <div class="text-2xl flex-shrink-0"><%= f.icon %></div>
+      <div>
+        <div class="font-semibold text-slate-700 text-sm"><%= f.title %></div>
+        <div class="text-xs text-slate-500 mt-1 leading-relaxed"><%= f.desc %></div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+
+  <!-- Tech Stack -->
+  <div class="bg-slate-800 rounded-2xl p-6 mb-8 text-white">
+    <h2 class="font-bold text-lg mb-4">Technology Stack</h2>
+    <div class="grid grid-cols-3 gap-3 text-center">
+      <div class="bg-white/10 rounded-xl p-3">
+        <div class="font-semibold text-sm">Node.js</div>
+        <div class="text-xs text-slate-400 mt-0.5">Runtime</div>
+      </div>
+      <div class="bg-white/10 rounded-xl p-3">
+        <div class="font-semibold text-sm">Express.js</div>
+        <div class="text-xs text-slate-400 mt-0.5">Web Framework</div>
+      </div>
+      <div class="bg-white/10 rounded-xl p-3">
+        <div class="font-semibold text-sm">EJS</div>
+        <div class="text-xs text-slate-400 mt-0.5">Templating</div>
+      </div>
+      <div class="bg-white/10 rounded-xl p-3">
+        <div class="font-semibold text-sm">Tailwind CSS</div>
+        <div class="text-xs text-slate-400 mt-0.5">UI Styling</div>
+      </div>
+      <div class="bg-white/10 rounded-xl p-3">
+        <div class="font-semibold text-sm">JSON Files</div>
+        <div class="text-xs text-slate-400 mt-0.5">Storage Layer</div>
+      </div>
+      <div class="bg-white/10 rounded-xl p-3">
+        <div class="font-semibold text-sm">qrcode</div>
+        <div class="text-xs text-slate-400 mt-0.5">QR Generation</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fuel Types Covered -->
+  <h2 class="font-bold text-slate-800 text-lg mb-4">Fuel Types Covered</h2>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+    <div class="bg-brand-50 border border-brand-100 rounded-2xl p-4 text-center">
+      <div class="text-2xl mb-1">⛽</div>
+      <div class="font-semibold text-slate-700 text-sm">Petrol</div>
+      <div class="text-xs text-slate-400 mt-1">Slot pre-booking + QR</div>
+    </div>
+    <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 text-center">
+      <div class="text-2xl mb-1">🔵</div>
+      <div class="font-semibold text-slate-700 text-sm">LPG</div>
+      <div class="text-xs text-slate-400 mt-1">Cylinder delivery booking</div>
+    </div>
+    <div class="bg-green-50 border border-green-100 rounded-2xl p-4 text-center">
+      <div class="text-2xl mb-1">💨</div>
+      <div class="font-semibold text-slate-700 text-sm">CNG</div>
+      <div class="text-xs text-slate-400 mt-1">Station finder (coming soon)</div>
+    </div>
+    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-center">
+      <div class="text-2xl mb-1">🔷</div>
+      <div class="font-semibold text-slate-700 text-sm">LNG</div>
+      <div class="text-xs text-slate-400 mt-1">Industrial (planned)</div>
+    </div>
+  </div>
+
+  <div class="text-center">
+    <a href="/" class="gradient-brand text-white font-semibold px-8 py-3 rounded-xl hover:opacity-90 transition-opacity inline-block">
+      Back to Home
+    </a>
+  </div>
+</div>
+
+<%- include('../layout/footer') %>

@@ -1,0 +1,73 @@
+<!-- ── FOOTER ─────────────────────────────────────────────────── -->
+<footer class="bg-slate-900 text-slate-300 mt-auto">
+  <div class="max-w-7xl mx-auto px-4 py-10">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+      <!-- Brand -->
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-2xl">⛽</span>
+          <span class="text-white font-bold text-lg">FuelIndia</span>
+        </div>
+        <p class="text-sm text-slate-400 leading-relaxed">
+          Real-time LPG, CNG & Petrol booking platform. No queues. No panic. Just fuel when you need it.
+        </p>
+        <div class="mt-4 flex gap-2">
+          <span class="text-xs bg-slate-800 px-2 py-1 rounded">🇮🇳 Made for India</span>
+          <span class="text-xs bg-slate-800 px-2 py-1 rounded">v1.0 — 2026</span>
+        </div>
+      </div>
+
+      <!-- Consumer -->
+      <div>
+        <h4 class="text-white font-semibold mb-3 text-sm uppercase tracking-wide">Consumer</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/dashboard" class="hover:text-brand-400 transition-colors">My Dashboard</a></li>
+          <li><a href="/petrol/pumps" class="hover:text-brand-400 transition-colors">Book Petrol Slot</a></li>
+          <li><a href="/lpg/book" class="hover:text-brand-400 transition-colors">Book LPG Cylinder</a></li>
+          <li><a href="/cng/stations" class="hover:text-brand-400 transition-colors">CNG Stations</a></li>
+          <li><a href="/booking/all" class="hover:text-brand-400 transition-colors">My Bookings</a></li>
+          <li><a href="/profile" class="hover:text-brand-400 transition-colors">My Profile & Garage</a></li>
+        </ul>
+      </div>
+
+      <!-- Info -->
+      <div>
+        <h4 class="text-white font-semibold mb-3 text-sm uppercase tracking-wide">Information</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/" class="hover:text-brand-400 transition-colors">Live Fuel Map</a></li>
+          <li><a href="/#prices" class="hover:text-brand-400 transition-colors">Today's Prices</a></li>
+          <li><a href="/#alerts" class="hover:text-brand-400 transition-colors">Crisis Alerts</a></li>
+          <li><a href="/about" class="hover:text-brand-400 transition-colors">About Platform</a></li>
+        </ul>
+      </div>
+
+      <!-- Emergency -->
+      <div>
+        <h4 class="text-white font-semibold mb-3 text-sm uppercase tracking-wide">Emergency</h4>
+        <ul class="space-y-3 text-sm">
+          <li class="flex items-center gap-2"><span>📞</span><a href="tel:1906" class="text-brand-400 font-semibold hover:underline">1906</a><span class="text-slate-500">— OMC Helpline</span></li>
+          <li class="flex items-center gap-2"><span>📞</span><a href="tel:1800233555" class="text-brand-400 font-semibold hover:underline">1800-233-555</a><span class="text-slate-500">— LPG Emergency</span></li>
+          <li class="flex items-center gap-2"><span>📞</span><span class="text-slate-400">101</span><span class="text-slate-500">— Fire Emergency</span></li>
+          <li class="mt-2 text-xs text-slate-500 bg-slate-800 rounded p-2">
+            🔴 Gas Leak? Open windows, do NOT switch on lights. Call 1906 immediately.
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-slate-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-slate-500">
+      <span>© 2026 FuelIndia Ecosystem Platform. All rights reserved.</span>
+      <span>Not affiliated with any OMC. Data is indicative only.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Auto-hide flash messages after 5 seconds
+  setTimeout(() => {
+    document.querySelectorAll('[data-flash]').forEach(el => el.remove());
+  }, 5000);
+</script>
+</body>
+</html>

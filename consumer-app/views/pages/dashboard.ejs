@@ -1,0 +1,224 @@
+<%- include('../layout/header') %>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+
+  <!-- Welcome Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">
+        Hello, <%= consumer.name.split(' ')[0] %> 👋
+      </h1>
+      <p class="text-slate-500 text-sm mt-1">
+        <%= consumer.city %> · PIN <%= consumer.pin_code %>
+        <% if (consumer.pmuy) { %><span class="ml-2 bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-medium">PMUY</span><% } %>
+        <span class="ml-2 bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-full"><%= consumer.priority_category %></span>
+      </p>
+    </div>
+    <div class="flex gap-2">
+      <a href="/petrol/pumps" class="gradient-brand text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90">⛽ Book Petrol</a>
+      <a href="/lpg/book" class="bg-orange-100 text-orange-700 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-orange-200">🫙 Book LPG</a>
+    </div>
+  </div>
+
+  <!-- Crisis Alert -->
+  <% if (crisis.level > 0) { %>
+  <div class="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 flex items-start gap-3">
+    <span class="text-xl flex-shrink-0">🚨</span>
+    <div>
+      <div class="font-semibold text-red-800 text-sm">Crisis Level <%= crisis.level %> — <%= crisis.label %></div>
+      <div class="text-red-600 text-sm mt-0.5"><%= crisis.message %></div>
+      <% if (crisis.rationing_active) { %>
+        <div class="mt-2 text-xs text-red-500">
+          Limits active: Petrol max <%= crisis.max_petrol_per_vehicle_daily %>L/day · LPG max <%= crisis.max_lpg_per_household_monthly %> cylinders/month
+        </div>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+
+  <!-- Stats Row -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center shadow-sm">
+      <div class="text-2xl font-bold text-brand-500"><%= petrolBookings.length %></div>
+      <div class="text-xs text-slate-500 mt-1">Active Petrol Bookings</div>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center shadow-sm">
+      <div class="text-2xl font-bold text-orange-500"><%= lpgBookings.length %></div>
+      <div class="text-xs text-slate-500 mt-1">Active LPG Bookings</div>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center shadow-sm">
+      <div class="text-2xl font-bold text-blue-500"><%= thisMonthLitres.toFixed(1) %> L</div>
+      <div class="text-xs text-slate-500 mt-1">Petrol This Month</div>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center shadow-sm">
+      <div class="text-2xl font-bold text-green-500"><%= consumer.loyalty_points || 0 %></div>
+      <div class="text-xs text-slate-500 mt-1">Loyalty Points</div>
+    </div>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+
+    <!-- Left: Active Bookings -->
+    <div class="md:col-span-2 space-y-5">
+
+      <!-- Active Petrol Bookings -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          <h2 class="font-bold text-slate-800">⛽ Active Petrol Bookings</h2>
+          <a href="/booking/my-petrol" class="text-xs text-brand-500 hover:underline">View All</a>
+        </div>
+        <div class="divide-y divide-slate-50">
+          <% if (petrolBookings.length === 0) { %>
+          <div class="px-5 py-8 text-center">
+            <p class="text-slate-400 text-sm">No active petrol bookings</p>
+            <a href="/petrol/pumps" class="mt-3 inline-block gradient-brand text-white text-sm px-5 py-2 rounded-lg hover:opacity-90">Book a Slot Now</a>
+          </div>
+          <% } else { %>
+            <% petrolBookings.forEach(b => { %>
+            <div class="px-5 py-4 flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-lg flex-shrink-0">⛽</div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <div class="font-medium text-slate-800 text-sm truncate"><%= b.pump_name %></div>
+                    <div class="text-xs text-slate-500 mt-0.5">
+                      <%= b.slot_date %> at <%= b.slot_time %> · <%= b.vehicle_rc %> · <%= b.quantity_litres %>L <%= b.fuel_grade %>
+                    </div>
+                  </div>
+                  <span class="flex-shrink-0 text-xs px-2 py-0.5 rounded-full font-medium
+                    <%= b.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' : b.status === 'DISPATCHED' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700' %>">
+                    <%= b.status %>
+                  </span>
+                </div>
+                <div class="mt-2 flex gap-2">
+                  <a href="/petrol/qr/<%= b.id %>" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1 rounded-lg transition-colors">View QR</a>
+                  <form action="/petrol/cancel/<%= b.id %>" method="POST" onsubmit="return confirm('Cancel this booking?')">
+                    <button class="text-xs text-red-500 hover:bg-red-50 px-3 py-1 rounded-lg transition-colors">Cancel</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Active LPG Bookings -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          <h2 class="font-bold text-slate-800">🫙 Active LPG Bookings</h2>
+          <a href="/booking/my-lpg" class="text-xs text-brand-500 hover:underline">View All</a>
+        </div>
+        <div>
+          <% if (lpgBookings.length === 0) { %>
+          <div class="px-5 py-8 text-center">
+            <p class="text-slate-400 text-sm">No active LPG bookings</p>
+            <a href="/lpg/book" class="mt-3 inline-block bg-orange-500 text-white text-sm px-5 py-2 rounded-lg hover:bg-orange-600">Book LPG Cylinder</a>
+          </div>
+          <% } else { %>
+            <% lpgBookings.forEach(b => { %>
+            <div class="px-5 py-4 flex items-start gap-4 border-b border-slate-50 last:border-0">
+              <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-lg flex-shrink-0">🫙</div>
+              <div class="flex-1">
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <div class="font-medium text-slate-800 text-sm"><%= b.distributor_name %></div>
+                    <div class="text-xs text-slate-500 mt-0.5"><%= b.token %> · <%= b.cylinder_type %> · ₹<%= b.amount %></div>
+                  </div>
+                  <span class="text-xs px-2 py-0.5 rounded-full font-medium
+                    <%= b.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' : b.status === 'QUEUED' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700' %>">
+                    <%= b.status %>
+                  </span>
+                </div>
+                <div class="mt-2 flex gap-2">
+                  <a href="/lpg/track/<%= b.id %>" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1 rounded-lg transition-colors">Track</a>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Quick Actions & Vehicles -->
+    <div class="space-y-5">
+
+      <!-- Quick Actions -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+        <h3 class="font-bold text-slate-800 mb-4">Quick Actions</h3>
+        <div class="space-y-2">
+          <a href="/petrol/pumps" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group">
+            <span class="w-9 h-9 gradient-brand rounded-lg flex items-center justify-center text-base">⛽</span>
+            <div>
+              <div class="text-sm font-medium text-slate-700 group-hover:text-brand-600">Book Petrol Slot</div>
+              <div class="text-xs text-slate-400">Scan QR, no waiting</div>
+            </div>
+          </a>
+          <a href="/lpg/book" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group">
+            <span class="w-9 h-9 bg-orange-500 rounded-lg flex items-center justify-center text-base">🫙</span>
+            <div>
+              <div class="text-sm font-medium text-slate-700 group-hover:text-orange-600">Book LPG Cylinder</div>
+              <div class="text-xs text-slate-400">Doorstep delivery</div>
+            </div>
+          </a>
+          <a href="/cng/stations" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group">
+            <span class="w-9 h-9 bg-blue-500 rounded-lg flex items-center justify-center text-base">🚗</span>
+            <div>
+              <div class="text-sm font-medium text-slate-700 group-hover:text-blue-600">Find CNG Station</div>
+              <div class="text-xs text-slate-400">Live queue status</div>
+            </div>
+          </a>
+          <a href="/profile" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group">
+            <span class="w-9 h-9 bg-slate-600 rounded-lg flex items-center justify-center text-base">👤</span>
+            <div>
+              <div class="text-sm font-medium text-slate-700">My Profile & Garage</div>
+              <div class="text-xs text-slate-400"><%= consumer.vehicles ? consumer.vehicles.length : 0 %> vehicle(s) registered</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- My Vehicles -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-slate-800">My Vehicles</h3>
+          <a href="/profile" class="text-xs text-brand-500 hover:underline">Manage</a>
+        </div>
+        <% if (!consumer.vehicles || consumer.vehicles.length === 0) { %>
+          <div class="text-center py-4">
+            <p class="text-slate-400 text-sm mb-2">No vehicles registered</p>
+            <a href="/profile" class="text-xs text-brand-500 hover:underline">Add vehicle →</a>
+          </div>
+        <% } else { %>
+          <div class="space-y-2">
+            <% consumer.vehicles.forEach(v => { %>
+            <div class="flex items-center gap-3 bg-slate-50 rounded-xl p-3">
+              <span class="text-xl"><%= v.type === 'Two-wheeler' ? '🏍' : '🚗' %></span>
+              <div>
+                <div class="text-sm font-semibold text-slate-700"><%= v.rc %></div>
+                <div class="text-xs text-slate-400"><%= v.brand %> · <%= v.fuel %> · <%= v.tank_capacity %>L tank</div>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Platform Credit -->
+      <% if (consumer.platform_credit > 0) { %>
+      <div class="bg-green-50 border border-green-200 rounded-2xl p-4">
+        <div class="flex items-center gap-2 mb-1">
+          <span>💳</span>
+          <span class="font-semibold text-green-800 text-sm">Platform Credit</span>
+        </div>
+        <div class="text-2xl font-bold text-green-700">₹<%= consumer.platform_credit %></div>
+        <p class="text-xs text-green-600 mt-1">Applied automatically on your next booking</p>
+      </div>
+      <% } %>
+
+    </div>
+  </div>
+</div>
+
+<%- include('../layout/footer') %>

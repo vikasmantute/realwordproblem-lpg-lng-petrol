@@ -1,0 +1,120 @@
+<%- include('../../layout/header') %>
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold text-slate-800 mb-1">All Bookings</h1>
+  <p class="text-slate-500 text-sm mb-6">Complete fuel booking history</p>
+
+  <!-- Summary Row -->
+  <div class="grid grid-cols-4 gap-3 mb-8">
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center">
+      <div class="text-2xl font-bold text-brand-500"><%= petrol.length %></div>
+      <div class="text-xs text-slate-500 mt-1">Petrol Total</div>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center">
+      <div class="text-2xl font-bold text-blue-500"><%= lpg.length %></div>
+      <div class="text-xs text-slate-500 mt-1">LPG Total</div>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center">
+      <div class="text-2xl font-bold text-green-500"><%= petrol.filter(b => b.status === 'COMPLETED').length + lpg.filter(b => b.status === 'DELIVERED').length %></div>
+      <div class="text-xs text-slate-500 mt-1">Completed</div>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center">
+      <div class="text-2xl font-bold text-slate-500"><%= petrol.filter(b => b.status === 'CANCELLED').length + lpg.filter(b => b.status === 'CANCELLED').length %></div>
+      <div class="text-xs text-slate-500 mt-1">Cancelled</div>
+    </div>
+  </div>
+
+  <!-- Petrol Bookings -->
+  <div class="flex items-center justify-between mb-3">
+    <h2 class="text-lg font-semibold text-slate-700">⛽ Petrol Bookings</h2>
+    <a href="/booking/my-petrol" class="text-xs text-brand-500 hover:underline">View Detail →</a>
+  </div>
+
+  <% if (petrol.length === 0) { %>
+  <div class="bg-white rounded-2xl border border-slate-200 p-6 text-center mb-8">
+    <p class="text-slate-400 text-sm">No petrol bookings yet</p>
+  </div>
+  <% } else { %>
+  <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden mb-8">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-slate-50 border-b border-slate-200">
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Token</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold hidden sm:table-cell">Pump</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Slot</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Qty</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Status</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% petrol.slice(0, 10).forEach(b => { %>
+        <tr>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600"><%= b.token %></td>
+          <td class="px-4 py-3 text-slate-700 hidden sm:table-cell"><%= b.pump_name %></td>
+          <td class="px-4 py-3 text-slate-500 text-xs"><%= b.slot_date %><br/><%= b.slot_time %></td>
+          <td class="px-4 py-3 text-slate-700"><%= b.quantity_litres %>L</td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-0.5 rounded-full text-xs
+              <%= b.status === 'COMPLETED' ? 'bg-green-100 text-green-600' : b.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-600' : 'bg-red-100 text-red-600' %>">
+              <%= b.status %>
+            </span>
+          </td>
+          <td class="px-4 py-3">
+            <a href="/petrol/qr/<%= b.id %>" class="text-xs text-brand-500 hover:underline">QR</a>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+
+  <!-- LPG Bookings -->
+  <div class="flex items-center justify-between mb-3">
+    <h2 class="text-lg font-semibold text-slate-700">🔵 LPG Bookings</h2>
+    <a href="/booking/my-lpg" class="text-xs text-brand-500 hover:underline">View Detail →</a>
+  </div>
+
+  <% if (lpg.length === 0) { %>
+  <div class="bg-white rounded-2xl border border-slate-200 p-6 text-center">
+    <p class="text-slate-400 text-sm">No LPG bookings yet</p>
+  </div>
+  <% } else { %>
+  <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-slate-50 border-b border-slate-200">
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Token</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold hidden sm:table-cell">Distributor</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Cylinder</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Amount</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Status</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% lpg.slice(0, 10).forEach(b => { %>
+        <tr>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600"><%= b.token %></td>
+          <td class="px-4 py-3 text-slate-700 hidden sm:table-cell"><%= b.distributor_name %></td>
+          <td class="px-4 py-3 text-slate-600"><%= b.cylinder_type %></td>
+          <td class="px-4 py-3 text-slate-700">₹<%= b.amount %></td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-0.5 rounded-full text-xs
+              <%= b.status === 'DELIVERED' ? 'bg-green-100 text-green-600' : b.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-600' : b.status === 'QUEUED' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-600' %>">
+              <%= b.status %>
+            </span>
+          </td>
+          <td class="px-4 py-3">
+            <a href="/lpg/track/<%= b.id %>" class="text-xs text-brand-500 hover:underline">Track</a>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>
+
+<%- include('../../layout/footer') %>

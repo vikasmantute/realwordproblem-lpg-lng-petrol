@@ -1,0 +1,15 @@
+{
+  "level": 0,
+  "label": "Normal",
+  "color": "green",
+  "message": "All fuel supplies are normal. No restrictions in effect.",
+  "updated_at": "2026-03-29T06:00:00Z",
+  "rationing_active": false,
+  "max_lpg_per_household_monthly": 2,
+  "max_petrol_per_vehicle_daily": 40,
+  "max_cng_per_vehicle_daily": null,
+  "priority_booking_only": false,
+  "emergency_contact": "1906",
+  "spr_release_active": false,
+  "alerts": []
+}

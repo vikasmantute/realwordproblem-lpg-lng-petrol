@@ -1,0 +1,119 @@
+<%- include('../../layout/header') %>
+
+<div class="max-w-2xl mx-auto px-4 py-8">
+  <a href="/booking/my-lpg" class="text-sm text-slate-500 hover:text-brand-500 mb-6 inline-block">← My LPG Bookings</a>
+
+  <!-- Token Header -->
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-5">
+    <div class="gradient-brand text-white p-5">
+      <div class="text-xs opacity-75 mb-1">LPG Booking Token</div>
+      <div class="text-2xl font-bold"><%= booking.token %></div>
+      <div class="text-orange-200 text-sm mt-1"><%= booking.distributor_name %></div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="px-5 py-4 border-b border-slate-100">
+      <%
+        const stages = ['PENDING','QUEUED','CONFIRMED','DISPATCHED','OUT_FOR_DELIVERY','DELIVERED'];
+        const currentIdx = stages.indexOf(booking.status);
+      %>
+      <div class="flex items-center gap-0">
+        <% stages.forEach((stage, i) => { %>
+          <div class="flex items-center <%= i < stages.length - 1 ? 'flex-1' : '' %>">
+            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0
+              <%= i <= currentIdx ? 'gradient-brand text-white' : 'bg-slate-100 text-slate-400' %>">
+              <%= i < currentIdx ? '✓' : i + 1 %>
+            </div>
+            <% if (i < stages.length - 1) { %>
+            <div class="flex-1 h-1 mx-1 rounded <%= i < currentIdx ? 'bg-brand-400' : 'bg-slate-200' %>"></div>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+      <div class="flex justify-between mt-2">
+        <% stages.forEach(stage => { %>
+        <div class="text-center" style="width:<%= 100 / stages.length %>%">
+          <div class="text-xs text-slate-400 leading-tight"><%= stage.replace('_', ' ') %></div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="p-5 space-y-3">
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Status</span>
+        <span class="font-bold px-2 py-0.5 rounded-full text-xs
+          <%= booking.status === 'DELIVERED' ? 'bg-green-100 text-green-700' : booking.status === 'QUEUED' ? 'bg-yellow-100 text-yellow-700' : booking.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600' %>">
+          <%= booking.status %>
+        </span>
+      </div>
+
+      <% if (booking.status === 'QUEUED' || booking.status === 'PENDING') { %>
+      <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-3">
+        <div class="text-xs text-yellow-700 font-semibold mb-1">⏳ Delayed Confirmation</div>
+        <div class="text-xs text-yellow-600">
+          Stock is limited at this distributor. Your queue position: <strong>#<%= queuePos || '—' %></strong>
+        </div>
+        <% if (booking.expected_confirmation_by) { %>
+        <div class="text-xs text-yellow-600 mt-1">
+          Confirmation expected by: <strong><%= new Date(booking.expected_confirmation_by).toLocaleString('en-IN') %></strong>
+        </div>
+        <% } %>
+        <div class="text-xs text-yellow-500 mt-1">💳 No charge until confirmed. Cancel anytime.</div>
+      </div>
+      <% } %>
+
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Cylinder</span>
+        <span class="font-medium text-slate-800"><%= booking.cylinder_type %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Booking Type</span>
+        <span class="font-medium text-slate-800"><%= booking.booking_type %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Preferred Date</span>
+        <span class="font-medium text-slate-800"><%= booking.preferred_date ? formatDate(booking.preferred_date) : 'ASAP' %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Amount</span>
+        <span class="font-bold text-slate-800">₹<%= booking.amount %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Delivery OTP</span>
+        <span class="font-bold text-brand-600 text-lg tracking-widest"><%= booking.delivery_otp %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Booked On</span>
+        <span class="font-medium text-slate-800"><%= new Date(booking.created_at).toLocaleString('en-IN') %></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instructions -->
+  <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-5">
+    <h3 class="font-semibold text-blue-800 text-sm mb-2">📋 When Delivery Agent Arrives</h3>
+    <ol class="space-y-1.5 text-xs text-blue-700">
+      <li>1. Agent will call you 30 minutes before arrival</li>
+      <li>2. Check that the cylinder seal is intact</li>
+      <li>3. Share your OTP (<strong><%= booking.delivery_otp %></strong>) to confirm receipt</li>
+      <li>4. Hand over the empty cylinder to the agent</li>
+      <li>5. Digital receipt will be sent to your account</li>
+    </ol>
+  </div>
+
+  <!-- Actions -->
+  <% if (!['DELIVERED', 'CANCELLED', 'OUT_FOR_DELIVERY'].includes(booking.status)) { %>
+  <form action="/lpg/cancel/<%= booking.id %>" method="POST" class="mb-4" onsubmit="return confirm('Cancel this LPG booking? You will receive a full refund.')">
+    <input type="hidden" name="reason" value="Consumer cancelled" />
+    <button class="w-full border border-red-300 text-red-600 text-sm font-medium py-2.5 rounded-xl hover:bg-red-50 transition-colors">
+      Cancel Booking & Get Full Refund
+    </button>
+  </form>
+  <% } %>
+
+  <a href="/booking/my-lpg" class="block text-center text-brand-500 text-sm hover:underline">← All LPG Bookings</a>
+</div>
+
+<%- include('../../layout/footer') %>

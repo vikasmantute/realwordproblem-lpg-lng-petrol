@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .gradient-brand {
+    @apply bg-gradient-to-r from-orange-500 to-orange-600;
+  }
+
+  .stock-high  { @apply bg-green-100 text-green-700; }
+  .stock-medium { @apply bg-yellow-100 text-yellow-700; }
+  .stock-low   { @apply bg-red-100 text-red-700; }
+
+  .slot-full   { @apply bg-red-100 text-red-400 cursor-not-allowed opacity-60; }
+  .slot-open   { @apply bg-white border border-slate-200 hover:border-brand-300 hover:bg-brand-50 cursor-pointer transition-colors; }
+}

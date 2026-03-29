@@ -1,0 +1,103 @@
+<%- include('../../layout/header') %>
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold text-slate-800 mb-1">My Petrol Bookings</h1>
+  <p class="text-slate-500 text-sm mb-6">Active slots and booking history</p>
+
+  <!-- Active Bookings -->
+  <h2 class="text-lg font-semibold text-slate-700 mb-3">Active Bookings</h2>
+  <% if (active.length === 0) { %>
+  <div class="bg-white rounded-2xl border border-slate-200 p-8 text-center mb-8">
+    <div class="text-4xl mb-3">⛽</div>
+    <p class="text-slate-500 text-sm">No active petrol bookings</p>
+    <a href="/petrol/pumps" class="mt-3 inline-block text-sm text-brand-500 hover:underline">Book a Slot →</a>
+  </div>
+  <% } else { %>
+  <div class="space-y-3 mb-8">
+    <% active.forEach(b => { %>
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="flex items-start justify-between p-4 border-b border-slate-100">
+        <div>
+          <div class="font-bold text-slate-800 text-sm"><%= b.token %></div>
+          <div class="text-xs text-slate-500"><%= b.pump_name %></div>
+        </div>
+        <span class="px-2 py-0.5 rounded-full text-xs font-bold
+          <%= b.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' %>">
+          <%= b.status %>
+        </span>
+      </div>
+      <div class="grid grid-cols-3 divide-x divide-slate-100 text-center py-3">
+        <div>
+          <div class="text-xs text-slate-400">Date</div>
+          <div class="text-sm font-semibold text-slate-700"><%= b.slot_date %></div>
+        </div>
+        <div>
+          <div class="text-xs text-slate-400">Slot</div>
+          <div class="text-sm font-semibold text-slate-700"><%= b.slot_time %></div>
+        </div>
+        <div>
+          <div class="text-xs text-slate-400">Qty</div>
+          <div class="text-sm font-semibold text-slate-700"><%= b.quantity_litres %>L</div>
+        </div>
+      </div>
+      <div class="flex gap-2 px-4 pb-4">
+        <a href="/petrol/qr/<%= b.id %>" class="flex-1 text-center gradient-brand text-white text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-opacity">
+          Show QR
+        </a>
+        <form action="/petrol/cancel/<%= b.id %>" method="POST" class="flex-1" onsubmit="return confirm('Cancel this petrol slot?')">
+          <button class="w-full border border-red-200 text-red-500 text-xs font-semibold py-2 rounded-xl hover:bg-red-50 transition-colors">
+            Cancel
+          </button>
+        </form>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } %>
+
+  <!-- History -->
+  <h2 class="text-lg font-semibold text-slate-700 mb-3">Past Bookings</h2>
+  <% if (history.length === 0) { %>
+  <div class="bg-white rounded-2xl border border-slate-200 p-6 text-center">
+    <p class="text-slate-400 text-sm">No past bookings yet</p>
+  </div>
+  <% } else { %>
+  <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-slate-50 border-b border-slate-200">
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Token</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Pump</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Date</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Qty</th>
+          <th class="text-left px-4 py-3 text-xs text-slate-500 font-semibold">Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% history.forEach(b => { %>
+        <tr>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600"><%= b.token %></td>
+          <td class="px-4 py-3 text-slate-700"><%= b.pump_name %></td>
+          <td class="px-4 py-3 text-slate-500"><%= b.slot_date %></td>
+          <td class="px-4 py-3 text-slate-700"><%= b.quantity_litres %>L</td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-0.5 rounded-full text-xs
+              <%= b.status === 'COMPLETED' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' %>">
+              <%= b.status %>
+            </span>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+
+  <div class="mt-6 text-center">
+    <a href="/petrol/pumps" class="gradient-brand text-white text-sm font-semibold px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity inline-block">
+      Book New Slot
+    </a>
+  </div>
+</div>
+
+<%- include('../../layout/footer') %>

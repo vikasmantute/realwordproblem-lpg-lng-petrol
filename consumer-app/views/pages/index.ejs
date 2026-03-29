@@ -1,0 +1,232 @@
+<%- include('../layout/header') %>
+
+<!-- HERO -->
+<section class="gradient-brand text-white">
+  <div class="max-w-7xl mx-auto px-4 py-16 md:py-24">
+    <div class="max-w-3xl">
+      <div class="flex items-center gap-2 mb-4">
+        <% if (crisis.level > 0) { %>
+          <span class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">⚠ CRISIS LEVEL <%= crisis.level %> ACTIVE</span>
+        <% } else { %>
+          <span class="bg-green-400/30 text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/20">✅ ALL SYSTEMS NORMAL</span>
+        <% } %>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">
+        No Lines.<br/>No Panic.<br/>Just Fuel.
+      </h1>
+      <p class="text-lg text-orange-100 mb-8 max-w-xl">
+        Pre-book your petrol slot, LPG cylinder, or CNG fill-up in seconds. Real-time stock, QR entry, zero waiting at the pump.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="/petrol/pumps" class="bg-white text-brand-600 font-semibold px-6 py-3 rounded-xl hover:bg-orange-50 transition-colors shadow-lg">
+          ⛽ Book Petrol Slot
+        </a>
+        <a href="/lpg/book" class="bg-white/10 border border-white/30 text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/20 transition-colors">
+          🫙 Book LPG Cylinder
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CRISIS BANNER -->
+<% if (crisis.level > 0) { %>
+<div class="bg-red-600 text-white">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 text-sm">
+    <span class="text-lg flex-shrink-0">🚨</span>
+    <span class="font-semibold">Crisis Alert:</span>
+    <span><%= crisis.message %></span>
+    <span class="ml-auto text-red-200 text-xs whitespace-nowrap">Level <%= crisis.level %> / 5</span>
+  </div>
+</div>
+<% } %>
+
+<!-- QUICK STATS -->
+<section class="bg-white border-b border-slate-200">
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="text-center">
+        <div class="text-3xl font-bold text-brand-500"><%= totalPumps %></div>
+        <div class="text-sm text-slate-500 mt-1">Registered Pumps</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-green-600"><%= highStockPumps %></div>
+        <div class="text-sm text-slate-500 mt-1">High Stock Pumps</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-slate-700"><%= distributors.length %></div>
+        <div class="text-sm text-slate-500 mt-1">LPG Distributors</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-blue-600">0 min</div>
+        <div class="text-sm text-slate-500 mt-1">Queue Wait Time</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE PUMP STATUS -->
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-800">Live Petrol Pump Status</h2>
+      <p class="text-slate-500 text-sm mt-1">Updated every 30 minutes · No login required</p>
+    </div>
+    <a href="/petrol/pumps" class="text-brand-500 text-sm font-semibold hover:underline">View All →</a>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-5">
+    <% pumps.forEach(pump => { %>
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+      <!-- Stock bar -->
+      <div class="h-1.5 <%= pump.stock_percent > 60 ? 'bg-green-400' : pump.stock_percent > 30 ? 'bg-yellow-400' : 'bg-red-400' %>"></div>
+
+      <div class="p-5">
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 uppercase"><%= pump.brand %></span>
+              <span class="text-xs px-2 py-0.5 rounded-full font-medium
+                <%= pump.stock_level === 'High' ? 'bg-green-100 text-green-700' : pump.stock_level === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700' %>">
+                <%= pump.stock_level %>
+              </span>
+            </div>
+            <h3 class="font-semibold text-slate-800 text-sm leading-tight"><%= pump.name %></h3>
+            <p class="text-xs text-slate-400 mt-0.5"><%= pump.address %></p>
+          </div>
+          <div class="text-right flex-shrink-0">
+            <div class="text-2xl font-bold text-slate-700"><%= pump.stock_percent %>%</div>
+            <div class="text-xs text-slate-400">stock</div>
+          </div>
+        </div>
+
+        <!-- Stock meter -->
+        <div class="bg-slate-100 rounded-full h-2 mb-3">
+          <div class="h-2 rounded-full transition-all
+            <%= pump.stock_percent > 60 ? 'bg-green-400' : pump.stock_percent > 30 ? 'bg-yellow-400' : 'bg-red-400' %>"
+            style="width: <%= pump.stock_percent %>%"></div>
+        </div>
+
+        <!-- Prices -->
+        <div class="flex gap-3 mb-4 text-xs">
+          <% pump.fuel_grades.slice(0,2).forEach(g => { %>
+          <div class="bg-slate-50 rounded-lg px-2 py-1.5 text-center">
+            <div class="font-semibold text-slate-700">₹<%= g.price_per_litre %></div>
+            <div class="text-slate-400"><%= g.grade.charAt(0) %></div>
+          </div>
+          <% }) %>
+          <div class="bg-slate-50 rounded-lg px-2 py-1.5 text-center">
+            <div class="font-semibold text-slate-700">₹<%= pump.diesel_price %></div>
+            <div class="text-slate-400">Diesel</div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1 text-xs text-slate-500">
+            <span>⭐ <%= pump.rating %></span>
+            <span>(<%= pump.review_count %>)</span>
+            <span class="text-slate-300">·</span>
+            <span><%= pump.operating_hours.open === '24hrs' ? '24 hours' : pump.operating_hours.open + '–' + pump.operating_hours.close %></span>
+          </div>
+          <a href="/petrol/book/<%= pump.id %>" class="gradient-brand text-white text-xs font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
+            Book Slot
+          </a>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="bg-slate-100 py-14">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-2xl font-bold text-slate-800 text-center mb-2">No Queue. How it Works.</h2>
+    <p class="text-slate-500 text-center text-sm mb-10">3 steps to fuel up without waiting in line</p>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-2xl p-6 text-center shadow-sm">
+        <div class="w-14 h-14 gradient-brand rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">📱</div>
+        <h3 class="font-bold text-slate-800 mb-2">1. Book Your Slot</h3>
+        <p class="text-slate-500 text-sm">Choose a pump, pick a time slot, enter your vehicle & quantity. Pay online in seconds.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 text-center shadow-sm">
+        <div class="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">📲</div>
+        <h3 class="font-bold text-slate-800 mb-2">2. Get Your QR Code</h3>
+        <p class="text-slate-500 text-sm">Instant QR generated in the app. Time-bound, vehicle-linked, tamper-proof. No printout needed.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 text-center shadow-sm">
+        <div class="w-14 h-14 bg-green-500 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">✅</div>
+        <h3 class="font-bold text-slate-800 mb-2">3. Drive In & Scan</h3>
+        <p class="text-slate-500 text-sm">Arrive in your slot window. Scan QR at the pre-book bay. Nozzle activates for your exact quantity.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LPG DISTRIBUTORS -->
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-800">LPG Distributor Status</h2>
+      <p class="text-slate-500 text-sm mt-1">Cylinder availability near you</p>
+    </div>
+    <a href="/lpg/book" class="text-brand-500 text-sm font-semibold hover:underline">Book Cylinder →</a>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-5">
+    <% distributors.forEach(dist => { %>
+    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-orange-100 text-orange-700 mb-2 inline-block"><%= dist.omc %></span>
+          <h3 class="font-semibold text-slate-800"><%= dist.name %></h3>
+          <p class="text-xs text-slate-400 mt-0.5"><%= dist.address %></p>
+        </div>
+        <span class="text-xs px-2 py-0.5 rounded-full font-medium
+          <%= dist.stock_level === 'High' ? 'bg-green-100 text-green-700' : dist.stock_level === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700' %>">
+          <%= dist.stock_level %>
+        </span>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 mb-4 text-center">
+        <div class="bg-slate-50 rounded-xl p-2">
+          <div class="text-xl font-bold text-slate-700"><%= dist.cylinders_14kg %></div>
+          <div class="text-xs text-slate-400">14.2 kg</div>
+        </div>
+        <div class="bg-slate-50 rounded-xl p-2">
+          <div class="text-xl font-bold text-slate-700"><%= dist.cylinders_5kg %></div>
+          <div class="text-xs text-slate-400">5 kg</div>
+        </div>
+        <div class="bg-slate-50 rounded-xl p-2">
+          <div class="text-xl font-bold text-slate-700"><%= dist.cylinders_19kg %></div>
+          <div class="text-xs text-slate-400">19 kg</div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between text-xs text-slate-500">
+        <span>📅 Next slot: <strong class="text-slate-700"><%= dist.next_slot_available %></strong></span>
+        <span>🛵 <%= dist.delivery_agents %> agents · <%= dist.daily_delivery_capacity %>/day</span>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="bg-slate-900 text-white">
+  <div class="max-w-7xl mx-auto px-4 py-16 text-center">
+    <h2 class="text-3xl font-bold mb-3">Be Ready. Not Reactive.</h2>
+    <p class="text-slate-400 mb-8 max-w-xl mx-auto">Join thousands of consumers who pre-book their fuel. No panic, no queues, no black market. Systematic, transparent, fair.</p>
+    <div class="flex flex-wrap gap-3 justify-center">
+      <a href="/auth/register" class="gradient-brand text-white font-semibold px-8 py-3 rounded-xl hover:opacity-90 transition-opacity shadow-lg">
+        Register Free — 2 Minutes
+      </a>
+      <a href="/auth/login" class="border border-slate-600 text-slate-300 font-semibold px-8 py-3 rounded-xl hover:bg-slate-800 transition-colors">
+        Already Registered? Login
+      </a>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/footer') %>

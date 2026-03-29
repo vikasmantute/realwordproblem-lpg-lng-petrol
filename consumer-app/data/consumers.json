@@ -1,0 +1,128 @@
+[
+  {
+    "id": "USR001",
+    "name": "Ramesh Kumar",
+    "mobile": "9876543210",
+    "email": "ramesh.kumar@email.com",
+    "password": "$2a$10$XQxBLQi4B3ZoACbE1FvnMuW8mClm8A8EfSHM0AMz1I3PQiVrgMwY2",
+    "aadhaar": "XXXX-XXXX-1234",
+    "ration_card": "MH/2022/RCB/009821",
+    "address": "12, Shivaji Nagar, Andheri East",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "pin_code": "400069",
+    "property_type": "Domestic",
+    "fuel_preferences": [
+      "LPG",
+      "Petrol"
+    ],
+    "vehicles": [
+      {
+        "rc": "MH01AB1234",
+        "type": "Four-wheeler",
+        "fuel": "Petrol",
+        "brand": "Maruti Suzuki Swift",
+        "year": 2022,
+        "tank_capacity": 37,
+        "preferred_quantity": 15,
+        "fuel_preference": "Premium"
+      },
+      {
+        "rc": "MH01ZZ9900",
+        "type": "Two-wheeler",
+        "fuel": "Petrol",
+        "brand": "Honda Activa 6G",
+        "year": 2023,
+        "tank_capacity": 5.3,
+        "preferred_quantity": 3,
+        "fuel_preference": "Regular"
+      }
+    ],
+    "cylinders": [
+      {
+        "serial": "INDANE-MUM-2019-884321",
+        "type": "14.2kg",
+        "omc": "Indane",
+        "last_inspection": "2025-06-15",
+        "manufactured": "2019-03-10"
+      }
+    ],
+    "subsidy_bank": "SBI XXXX8821",
+    "aadhaar_linked": true,
+    "pmuy": false,
+    "priority_category": "P4",
+    "loyalty_points": 420,
+    "platform_credit": 0,
+    "created_at": "2024-01-15T10:00:00Z",
+    "last_login": "2026-03-28T08:45:00Z",
+    "no_show_count": 0,
+    "prebooking_suspended": false,
+    "prebooking_suspended_until": null
+  },
+  {
+    "id": "USR002",
+    "name": "Sunita Devi",
+    "mobile": "9123456789",
+    "email": "sunita.devi@email.com",
+    "password": "$2a$10$XQxBLQi4B3ZoACbE1FvnMuW8mClm8A8EfSHM0AMz1I3PQiVrgMwY2",
+    "aadhaar": "XXXX-XXXX-5678",
+    "ration_card": "MH/2020/RCB/003312",
+    "address": "Flat 4B, Nandanvan CHS, Goregaon West",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "pin_code": "400104",
+    "property_type": "Domestic",
+    "fuel_preferences": [
+      "LPG"
+    ],
+    "vehicles": [],
+    "cylinders": [
+      {
+        "serial": "BHARATGAS-MUM-2018-441229",
+        "type": "14.2kg",
+        "omc": "Bharatgas",
+        "last_inspection": "2025-01-20",
+        "manufactured": "2018-07-22"
+      }
+    ],
+    "subsidy_bank": "Bank of Maharashtra XXXX4421",
+    "aadhaar_linked": true,
+    "pmuy": true,
+    "priority_category": "P2",
+    "loyalty_points": 85,
+    "platform_credit": 50,
+    "created_at": "2023-08-10T08:00:00Z",
+    "last_login": "2026-03-27T11:20:00Z",
+    "no_show_count": 0,
+    "prebooking_suspended": false,
+    "prebooking_suspended_until": null
+  },
+  {
+    "id": "USR1774803956664",
+    "name": "demo",
+    "mobile": "0000000000",
+    "email": "demi@fuelindia",
+    "password": "$2a$10$KMVs41GIo9EHiOjQqsfq.OTfv55fZNgW4bCEGYpKeJjypMDz8gkf.",
+    "aadhaar": "",
+    "ration_card": "",
+    "address": "India",
+    "city": "Mumabi",
+    "state": "",
+    "pin_code": "000000",
+    "property_type": "Domestic",
+    "fuel_preferences": [],
+    "vehicles": [],
+    "cylinders": [],
+    "subsidy_bank": "",
+    "aadhaar_linked": false,
+    "pmuy": false,
+    "priority_category": "P4",
+    "loyalty_points": 0,
+    "platform_credit": 0,
+    "created_at": "2026-03-29T17:05:56.664Z",
+    "last_login": "2026-03-29T17:05:56.664Z",
+    "no_show_count": 0,
+    "prebooking_suspended": false,
+    "prebooking_suspended_until": null
+  }
+]

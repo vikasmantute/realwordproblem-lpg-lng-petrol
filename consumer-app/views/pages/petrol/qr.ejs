@@ -1,0 +1,107 @@
+<%- include('../../layout/header') %>
+
+<div class="max-w-md mx-auto px-4 py-10">
+
+  <!-- Token badge -->
+  <div class="text-center mb-6">
+    <div class="inline-flex items-center gap-2 bg-green-100 text-green-700 text-sm font-semibold px-4 py-2 rounded-full mb-3">
+      ✅ Booking Confirmed
+    </div>
+    <h1 class="text-xl font-bold text-slate-800"><%= booking.token %></h1>
+    <p class="text-slate-500 text-sm mt-1">Scan this QR at the pump bay. No cash needed.</p>
+  </div>
+
+  <!-- QR Card -->
+  <div class="bg-white rounded-2xl border-2 border-slate-200 shadow-lg overflow-hidden mb-5">
+
+    <!-- QR Header -->
+    <div class="gradient-brand text-white text-center py-4">
+      <div class="text-sm font-semibold opacity-90">⛽ FuelIndia Petrol Slot</div>
+      <div class="text-xs opacity-70 mt-0.5">Time-bound · Vehicle-linked · One-time use</div>
+    </div>
+
+    <!-- QR Code -->
+    <div class="p-6 text-center">
+      <div class="inline-block p-3 bg-slate-50 rounded-xl border border-slate-200">
+        <img src="<%= qrDataURL %>" alt="Booking QR Code" class="w-56 h-56" />
+      </div>
+      <p class="text-xs text-slate-400 mt-3">Valid ±15 minutes of your slot time</p>
+    </div>
+
+    <!-- Booking Details -->
+    <div class="border-t border-slate-100 px-5 py-4 space-y-3">
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Pump</span>
+        <span class="font-medium text-slate-800 text-right max-w-xs"><%= booking.pump_name %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Address</span>
+        <span class="font-medium text-slate-800 text-right max-w-xs text-xs"><%= booking.pump_address %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Date</span>
+        <span class="font-medium text-slate-800"><%= formatDate(booking.slot_date) %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Slot Time</span>
+        <span class="font-semibold text-brand-600 text-base"><%= booking.slot_time %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Window</span>
+        <span class="font-medium text-slate-800"><%= booking.slot_time %> + <%= booking.slot_window_minutes %> min (±15 min grace)</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Vehicle</span>
+        <span class="font-semibold text-slate-800"><%= booking.vehicle_rc %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Fuel</span>
+        <span class="font-medium text-slate-800"><%= booking.fuel_grade %> · <%= booking.quantity_litres %>L</span>
+      </div>
+      <div class="flex justify-between text-sm border-t border-slate-100 pt-3 mt-3">
+        <span class="text-slate-500">Amount Paid</span>
+        <span class="font-bold text-green-700 text-base">₹<%= booking.amount_paid.toLocaleString('en-IN', {minimumFractionDigits:2}) %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Status</span>
+        <span class="font-bold text-green-600 uppercase text-xs">● <%= booking.status %></span>
+      </div>
+    </div>
+
+    <!-- QR Footer -->
+    <div class="bg-slate-50 border-t border-slate-100 px-5 py-3">
+      <div class="text-xs text-slate-500 text-center">
+        🔒 QR is cryptographically signed · Cannot be reused or transferred
+      </div>
+    </div>
+  </div>
+
+  <!-- Instructions -->
+  <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-5">
+    <h3 class="font-semibold text-blue-800 text-sm mb-3">📋 At the Pump — What to Do</h3>
+    <ol class="space-y-2 text-xs text-blue-700">
+      <li class="flex gap-2"><span class="font-bold">1.</span> Look for the <strong>PRE-BOOK LANE</strong> at the pump (separate from walk-in lane)</li>
+      <li class="flex gap-2"><span class="font-bold">2.</span> Drive to any available pre-book bay</li>
+      <li class="flex gap-2"><span class="font-bold">3.</span> Open this screen and hold QR in front of the bay scanner</li>
+      <li class="flex gap-2"><span class="font-bold">4.</span> Screen will show <em>"✅ <%= booking.vehicle_rc %> — <%= booking.quantity_litres %>L <%= booking.fuel_grade %> — AUTHORISED"</em></li>
+      <li class="flex gap-2"><span class="font-bold">5.</span> Attendant will fill exactly <%= booking.quantity_litres %> litres. Nozzle auto-stops.</li>
+      <li class="flex gap-2"><span class="font-bold">6.</span> Drive away. Receipt will be sent to your account.</li>
+    </ol>
+  </div>
+
+  <!-- Actions -->
+  <div class="grid grid-cols-2 gap-3 mb-4">
+    <form action="/petrol/cancel/<%= booking.id %>" method="POST" onsubmit="return confirm('Cancel this booking? Refund will be based on cancellation timing.')">
+      <button class="w-full border border-red-300 text-red-600 text-sm font-medium py-2.5 rounded-xl hover:bg-red-50 transition-colors">
+        Cancel Booking
+      </button>
+    </form>
+    <a href="/booking/my-petrol" class="block text-center border border-slate-300 text-slate-600 text-sm font-medium py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+      My Bookings
+    </a>
+  </div>
+
+  <a href="/dashboard" class="block text-center text-brand-500 text-sm hover:underline">← Back to Dashboard</a>
+</div>
+
+<%- include('../../layout/footer') %>

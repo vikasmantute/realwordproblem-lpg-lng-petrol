@@ -1,0 +1,158 @@
+<%- include('../../layout/header') %>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-800">⛽ Find & Book Petrol Slots</h1>
+    <p class="text-slate-500 text-sm mt-1">Pre-book a timed slot. QR entry. No waiting in line.</p>
+  </div>
+
+  <!-- Filters -->
+  <form method="GET" action="/petrol/pumps" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1.5">PIN Code Area</label>
+        <input type="text" name="pin" maxlength="6" placeholder="e.g. 400069" value="<%= query.pin || '' %>"
+          class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-400" />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1.5">Brand</label>
+        <select name="brand" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-400">
+          <option value="">All Brands</option>
+          <option value="HPCL" <%= query.brand === 'HPCL' ? 'selected' : '' %>>HPCL (HP)</option>
+          <option value="IOCL" <%= query.brand === 'IOCL' ? 'selected' : '' %>>IOCL (Indian Oil)</option>
+          <option value="BPCL" <%= query.brand === 'BPCL' ? 'selected' : '' %>>BPCL (Speed)</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1.5">Stock Level</label>
+        <select name="stock" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-400">
+          <option value="">All Levels</option>
+          <option value="High" <%= query.stock === 'High' ? 'selected' : '' %>>🟢 High</option>
+          <option value="Medium" <%= query.stock === 'Medium' ? 'selected' : '' %>>🟡 Medium</option>
+          <option value="Low" <%= query.stock === 'Low' ? 'selected' : '' %>>🔴 Low</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1.5">Fuel Grade</label>
+        <select name="grade" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-400">
+          <option value="">All Grades</option>
+          <option value="Regular">Regular</option>
+          <option value="Premium">Premium</option>
+          <option value="Super Premium">Super Premium</option>
+        </select>
+      </div>
+    </div>
+    <div class="mt-4 flex gap-3">
+      <button type="submit" class="gradient-brand text-white text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90">Apply Filters</button>
+      <a href="/petrol/pumps" class="border border-slate-300 text-slate-600 text-sm px-5 py-2 rounded-lg hover:bg-slate-50">Clear</a>
+    </div>
+  </form>
+
+  <!-- Crisis note -->
+  <% if (crisis.level > 1) { %>
+  <div class="bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-5 flex items-center gap-3 text-sm text-red-700">
+    <span>⚠️</span>
+    <span><strong>Crisis Mode Active:</strong> Booking limits are in effect. Max per vehicle per day varies by pump stock level.</span>
+  </div>
+  <% } %>
+
+  <!-- Pump Cards -->
+  <% if (pumps.length === 0) { %>
+    <div class="text-center py-16 bg-white rounded-2xl border border-slate-200">
+      <div class="text-5xl mb-4">🔍</div>
+      <p class="text-slate-600 font-medium">No pumps found with these filters</p>
+      <a href="/petrol/pumps" class="mt-4 inline-block text-brand-500 hover:underline text-sm">Clear filters</a>
+    </div>
+  <% } else { %>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <% pumps.forEach(pump => { %>
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col">
+
+        <!-- Stock colour bar -->
+        <div class="h-1.5 <%= pump.stock_percent > 60 ? 'bg-green-400' : pump.stock_percent > 30 ? 'bg-yellow-400' : 'bg-red-400' %>"></div>
+
+        <div class="p-5 flex-1 flex flex-col">
+          <!-- Badge row -->
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 uppercase tracking-wide"><%= pump.brand %></span>
+            <span class="text-xs px-2 py-0.5 rounded-full font-medium
+              <%= pump.stock_level === 'High' ? 'bg-green-100 text-green-700' : pump.stock_level === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700' %>">
+              <%= pump.stock_level %> Stock
+            </span>
+            <% if (pump.qr_scanner_available) { %>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium">QR ✓</span>
+            <% } %>
+          </div>
+
+          <h3 class="font-bold text-slate-800 leading-tight mb-1"><%= pump.name %></h3>
+          <p class="text-xs text-slate-400 mb-4"><%= pump.address %></p>
+
+          <!-- Stock meter -->
+          <div class="flex items-center gap-2 mb-4">
+            <div class="flex-1 bg-slate-100 rounded-full h-2">
+              <div class="h-2 rounded-full <%= pump.stock_percent > 60 ? 'bg-green-400' : pump.stock_percent > 30 ? 'bg-yellow-400' : 'bg-red-400' %>"
+                style="width:<%= pump.stock_percent %>%"></div>
+            </div>
+            <span class="text-xs font-semibold text-slate-600 w-10 text-right"><%= pump.stock_percent %>%</span>
+          </div>
+
+          <!-- Prices grid -->
+          <div class="grid grid-cols-3 gap-2 mb-4">
+            <% pump.fuel_grades.slice(0,3).forEach(g => { %>
+            <div class="text-center bg-slate-50 rounded-lg p-2">
+              <div class="text-sm font-bold text-slate-700">₹<%= g.price_per_litre %></div>
+              <div class="text-xs text-slate-400 truncate"><%= g.grade.split(' ')[0] %></div>
+            </div>
+            <% }) %>
+          </div>
+
+          <!-- Meta -->
+          <div class="flex items-center gap-3 text-xs text-slate-500 mb-4">
+            <span>⭐ <%= pump.rating %> (<%= pump.review_count %>)</span>
+            <span class="text-slate-300">·</span>
+            <span><%= pump.operating_hours.open === '24hrs' ? '24/7 Open' : pump.operating_hours.open + ' – ' + pump.operating_hours.close %></span>
+          </div>
+
+          <!-- Next slot -->
+          <% if (pump.nextSlot) { %>
+          <div class="bg-green-50 border border-green-100 rounded-lg px-3 py-2 mb-4 text-xs text-green-700">
+            🕐 Next available: <strong><%= pump.nextSlot.formatted %></strong>
+          </div>
+          <% } else { %>
+          <div class="bg-red-50 border border-red-100 rounded-lg px-3 py-2 mb-4 text-xs text-red-600">
+            ❌ No slots available in the next 3 days
+          </div>
+          <% } %>
+
+          <!-- Nozzle info -->
+          <div class="text-xs text-slate-400 mb-4">
+            <%= pump.nozzles %> nozzles · <%= pump.slot_duration_minutes %>-min slots · Max <%= pump.per_vehicle_limit_normal %>L/vehicle
+          </div>
+
+          <div class="mt-auto">
+            <% if (!pump.booking_suspended && pump.nextSlot) { %>
+              <% if (locals.consumer) { %>
+                <a href="/petrol/book/<%= pump.id %>" class="block w-full text-center gradient-brand text-white text-sm font-semibold py-2.5 rounded-xl hover:opacity-90 transition-opacity">
+                  Book a Slot →
+                </a>
+              <% } else { %>
+                <a href="/auth/login" class="block w-full text-center border-2 border-brand-400 text-brand-600 text-sm font-semibold py-2.5 rounded-xl hover:bg-brand-50 transition-colors">
+                  Login to Book →
+                </a>
+              <% } %>
+            <% } else if (pump.booking_suspended) { %>
+              <div class="text-center text-xs text-red-500 bg-red-50 py-2.5 rounded-xl">Bookings Suspended</div>
+            <% } else { %>
+              <div class="text-center text-xs text-slate-500 bg-slate-100 py-2.5 rounded-xl">No Slots Available</div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../../layout/footer') %>
