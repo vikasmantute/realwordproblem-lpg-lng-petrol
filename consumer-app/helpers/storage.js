@@ -3,12 +3,30 @@ const path = require('path');
 
 const DATA_DIR = path.join(__dirname, '../data');
 
+// On Netlify/serverless, fs writes go to /tmp (writable, ephemeral)
+const IS_SERVERLESS = process.env.NETLIFY === 'true' || process.env.AWS_LAMBDA_FUNCTION_NAME;
+const TMP_DIR = '/tmp/fuelapp_data';
+
+function ensureTmpDir() {
+  if (!fs.existsSync(TMP_DIR)) {
+    fs.mkdirSync(TMP_DIR, { recursive: true });
+  }
+}
+
 /**
  * Read a JSON data file.
  * @param {string} filename - e.g. 'consumers'
  * @returns {Array|Object}
  */
 function readData(filename) {
+  // In serverless: prefer /tmp copy (has writes), fall back to bundled data
+  if (IS_SERVERLESS) {
+    ensureTmpDir();
+    const tmpPath = path.join(TMP_DIR, `${filename}.json`);
+    if (fs.existsSync(tmpPath)) {
+      return JSON.parse(fs.readFileSync(tmpPath, 'utf-8'));
+    }
+  }
   const filePath = path.join(DATA_DIR, `${filename}.json`);
   if (!fs.existsSync(filePath)) return [];
   const raw = fs.readFileSync(filePath, 'utf-8');
@@ -21,6 +39,12 @@ function readData(filename) {
  * @param {Array|Object} data
  */
 function writeData(filename, data) {
+  if (IS_SERVERLESS) {
+    ensureTmpDir();
+    const tmpPath = path.join(TMP_DIR, `${filename}.json`);
+    fs.writeFileSync(tmpPath, JSON.stringify(data, null, 2), 'utf-8');
+    return;
+  }
   const filePath = path.join(DATA_DIR, `${filename}.json`);
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }

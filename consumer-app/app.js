@@ -71,9 +71,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ─── Start Server ──────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n⛽ Fuel Ecosystem Consumer App`);
-  console.log(`   Running at: http://localhost:${PORT}`);
-  console.log(`   Mode: Development\n`);
-});
+// ─── Export app for Netlify / serverless ───────────────────────
+module.exports = app;
+
+// ─── Start Server (local only) ─────────────────────────────────
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n⛽ Fuel Ecosystem Consumer App`);
+    console.log(`   Running at: http://localhost:${PORT}`);
+    console.log(`   Mode: Development\n`);
+  });
+}
