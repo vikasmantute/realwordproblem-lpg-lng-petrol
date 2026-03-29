@@ -145,10 +145,117 @@ function getLPGQueuePosition(distributorId, bookingId) {
   return pos === -1 ? null : pos + 1;
 }
 
+/**
+ * Generate a slot grid for a CNG station for a given date.
+ */
+function generateCNGSlots(station, dateStr) {
+  const allBookings = findAll('bookings_cng', b =>
+    b.station_id === station.id &&
+    b.slot_date === dateStr &&
+    !['CANCELLED', 'NO_SHOW'].includes(b.status)
+  );
+
+  const openStr = station.operating_hours.open === '00:00' ? '00:00' : station.operating_hours.open;
+  const closeStr = ['23:55', '23:59'].includes(station.operating_hours.close) ? '23:55' : station.operating_hours.close;
+
+  const [openH, openM] = openStr.split(':').map(Number);
+  const [closeH, closeM] = closeStr.split(':').map(Number);
+
+  const slotDuration = station.slot_duration_minutes || 5;
+  const walkInBuffer = station.walk_in_buffer_percent / 100;
+  const maxBookablePerSlot = Math.max(1, Math.floor(station.nozzles * (1 - walkInBuffer)));
+
+  const slots = [];
+  let cursor = new Date(`${dateStr}T${String(openH).padStart(2,'0')}:${String(openM).padStart(2,'0')}:00`);
+  const closeTime = new Date(`${dateStr}T${String(closeH).padStart(2,'0')}:${String(closeM).padStart(2,'0')}:00`);
+
+  // Only show future slots for today
+  const now = new Date();
+  const isToday = dateStr === todayStr();
+
+  while (cursor < closeTime) {
+    const timeStr = cursor.toTimeString().slice(0, 5);
+
+    // Skip already-passed slots for today
+    if (isToday && cursor <= now) {
+      cursor = new Date(cursor.getTime() + slotDuration * 60 * 1000);
+      continue;
+    }
+
+    const booked = allBookings.filter(b => b.slot_time === timeStr).length;
+    const available = Math.max(0, maxBookablePerSlot - booked);
+
+    slots.push({
+      time: timeStr,
+      booked,
+      available,
+      capacity: maxBookablePerSlot,
+      full: available === 0,
+      percent_full: Math.round((booked / maxBookablePerSlot) * 100)
+    });
+
+    cursor = new Date(cursor.getTime() + slotDuration * 60 * 1000);
+  }
+
+  return slots;
+}
+
+/**
+ * Generate a unique booking token for CNG.
+ */
+function generateCNGToken(cityCode = 'MUM') {
+  const seq = String(Math.floor(Math.random() * 900000) + 100000);
+  return `CNG-${cityCode}-${new Date().getFullYear()}-${seq}`;
+}
+
+/**
+ * Get max kg allowed for a CNG booking based on vehicle type and station stock.
+ */
+function getMaxKg(station, vehicleType) {
+  const base = vehicleType === '2W' ? (station.max_kg_2w || 2)
+    : vehicleType === 'HV' ? (station.max_kg_hv || 50)
+    : (station.max_kg_4w || 10);
+
+  // Reduce limits on low pressure
+  if (station.pressure_level === 'Low') return Math.max(1, base * 0.5);
+  if (station.pressure_level === 'Medium') return Math.max(1, base * 0.8);
+  return base;
+}
+
+/**
+ * Get advance booking days for CNG station based on stock.
+ */
+function getCNGAdvanceDays(station) {
+  const stock = station.stock_percent;
+  if (stock > 70) return 3;
+  if (stock >= 40) return 1;
+  return 0; // same day only
+}
+
+/**
+ * Get next available CNG slot.
+ */
+function getNextAvailableCNGSlot(station) {
+  const days = nextDays(getCNGAdvanceDays(station) + 1);
+  for (const day of days) {
+    const slots = generateCNGSlots(station, day);
+    const available = slots.find(s => !s.full);
+    if (available) {
+      return { date: day, time: available.time, formatted: `${formatDate(day)} at ${available.time}` };
+    }
+  }
+  return null;
+}
+
 module.exports = {
   generatePumpSlots,
   generatePetrolToken,
   generateLPGToken,
+  generateCNGSlots,
+  generateCNGToken,
+  getMaxKg,
+  getCNGAdvanceDays,
+  getNextAvailableCNGSlot,
   todayStr,
   nextDays,
   formatDate,

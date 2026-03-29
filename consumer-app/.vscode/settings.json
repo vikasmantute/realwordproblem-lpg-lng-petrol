@@ -1,0 +1,14 @@
+{
+  "files.associations": {
+    "*.ejs": "html"
+  },
+  "css.validate": false,
+  "less.validate": false,
+  "scss.validate": false,
+  "html.validate.scripts": false,
+  "html.validate.styles": false,
+  "javascript.validate.enable": false,
+  "emmet.includeLanguages": {
+    "ejs": "html"
+  }
+}

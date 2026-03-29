@@ -44,12 +44,32 @@ router.get('/all', requireLogin, (req, res) => {
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   const lpg = findAll('bookings_lpg', b => b.consumer_id === consumer.id)
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const cng = findAll('bookings_cng', b => b.consumer_id === consumer.id)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
   res.render('pages/booking/all', {
     title: 'All Bookings — FuelIndia',
     consumer,
     petrol,
-    lpg
+    lpg,
+    cng
+  });
+});
+
+// GET /booking/my-cng
+router.get('/my-cng', requireLogin, (req, res) => {
+  const consumer = req.session.consumer;
+  const bookings = findAll('bookings_cng', b => b.consumer_id === consumer.id)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+  const active = bookings.filter(b => !['CANCELLED', 'COMPLETED', 'NO_SHOW'].includes(b.status));
+  const history = bookings.filter(b => ['CANCELLED', 'COMPLETED', 'NO_SHOW'].includes(b.status));
+
+  res.render('pages/booking/my_cng', {
+    title: 'My CNG Bookings — FuelIndia',
+    consumer,
+    active,
+    history
   });
 });
 

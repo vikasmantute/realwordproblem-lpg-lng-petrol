@@ -1,0 +1,94 @@
+<%- include('../../layout/header') %>
+
+<div class="max-w-md mx-auto px-4 py-8">
+  <a href="/booking/my-cng" class="text-sm text-slate-500 hover:text-brand-500 mb-6 inline-block">← My CNG Bookings</a>
+
+  <!-- QR Card -->
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-5">
+    <!-- Header -->
+    <div class="gradient-brand text-white p-5 text-center">
+      <div class="text-xs opacity-75 mb-1">CNG Booking Token</div>
+      <div class="text-2xl font-bold tracking-wide"><%= booking.token %></div>
+      <div class="text-orange-200 text-sm mt-1"><%= booking.station_name %></div>
+    </div>
+
+    <!-- QR Code -->
+    <div class="p-6 flex flex-col items-center">
+      <% if (booking.status === 'CONFIRMED') { %>
+      <div class="bg-slate-50 rounded-2xl p-3 border border-slate-100 mb-4">
+        <img src="<%= qrDataUrl %>" alt="CNG Booking QR" class="w-56 h-56" />
+      </div>
+      <p class="text-xs text-slate-500 text-center">Show this QR at the station scanner to proceed to the nozzle</p>
+      <% } else if (booking.status === 'CANCELLED') { %>
+      <div class="py-6 text-center">
+        <div class="text-4xl mb-3">❌</div>
+        <p class="text-red-500 font-semibold text-sm">This booking has been cancelled</p>
+        <p class="text-xs text-slate-400 mt-1">QR is no longer valid</p>
+      </div>
+      <% } else if (booking.status === 'COMPLETED') { %>
+      <div class="py-6 text-center">
+        <div class="text-4xl mb-3">✅</div>
+        <p class="text-green-600 font-semibold text-sm">Booking completed</p>
+        <p class="text-xs text-slate-400 mt-1">Thank you for using FuelEco</p>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Booking Details -->
+    <div class="border-t border-slate-100 px-5 py-4 space-y-2.5">
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Status</span>
+        <span class="font-bold px-2 py-0.5 rounded-full text-xs
+          <%= booking.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' : booking.status === 'CANCELLED' ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-600' %>">
+          <%= booking.status %>
+        </span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Station</span>
+        <span class="font-medium text-slate-800 text-right max-w-[60%]"><%= booking.station_name %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Date & Time</span>
+        <span class="font-medium text-slate-800"><%= formatDate(booking.slot_date) %> · <%= booking.slot_time %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Vehicle</span>
+        <span class="font-medium text-slate-800"><%= booking.vehicle_rc %> (<%= booking.vehicle_type %>)</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Quantity</span>
+        <span class="font-medium text-slate-800"><%= booking.kg_requested %> kg @ ₹<%= booking.price_per_kg %>/kg</span>
+      </div>
+      <div class="flex justify-between text-sm border-t border-slate-100 pt-2.5 mt-2.5">
+        <span class="text-slate-500 font-semibold">Total Paid</span>
+        <span class="font-bold text-slate-800 text-base">₹<%= booking.amount_paid %></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- At-Station Instructions -->
+  <% if (booking.status === 'CONFIRMED') { %>
+  <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-4">
+    <h3 class="font-semibold text-blue-800 text-sm mb-2">📋 At the CNG Station</h3>
+    <ol class="space-y-1.5 text-xs text-blue-700">
+      <li>1. Arrive within your 5-minute slot window</li>
+      <li>2. Move to the pre-booking express lane (look for the QR scanner)</li>
+      <li>3. Scan this QR or show the token: <strong><%= booking.token %></strong></li>
+      <li>4. Proceed directly to the assigned nozzle</li>
+      <li>5. Fill exactly <%= booking.kg_requested %> kg as booked</li>
+    </ol>
+  </div>
+
+  <!-- Cancel -->
+  <form action="/cng/cancel/<%= booking.id %>" method="POST" onsubmit="return confirm('Cancel this CNG booking? Full refund will be issued.')">
+    <input type="hidden" name="reason" value="Consumer cancelled" />
+    <button class="w-full border border-red-300 text-red-500 text-sm font-medium py-2.5 rounded-xl hover:bg-red-50 transition-colors">
+      Cancel Booking & Get Full Refund
+    </button>
+  </form>
+  <% } %>
+
+  <a href="/cng/stations" class="block text-center text-brand-500 text-sm hover:underline mt-4">← Browse More Stations</a>
+</div>
+
+<%- include('../../layout/footer') %>

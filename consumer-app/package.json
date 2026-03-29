@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "build:css": "npx tailwindcss -i ./public/css/input.css -o ./public/css/output.css --watch"
+    "build": "npx tailwindcss -i ./public/css/input.css -o ./public/css/output.css",
+    "build:watch": "npx tailwindcss -i ./public/css/input.css -o ./public/css/output.css --watch"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

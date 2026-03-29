@@ -1,1 +1,30 @@
-[]
+[
+  {
+    "id": "PTR-1774805346724",
+    "token": "PTR-MUM-2026-338553",
+    "consumer_id": "USR1774803956664",
+    "consumer_name": "demo",
+    "consumer_mobile": "0000000000",
+    "pump_id": "PUMP001",
+    "pump_name": "HP Petrol Pump — Andheri East",
+    "pump_address": "Plot 14, MIDC Road, Andheri East, Mumbai",
+    "slot_date": "2026-03-29",
+    "slot_time": "06:00",
+    "slot_window_minutes": 10,
+    "vehicle_rc": "MH12NM1212",
+    "fuel_grade": "Regular",
+    "quantity_litres": 10,
+    "price_per_litre": 94.5,
+    "amount_paid": 945,
+    "payment_status": "PAID",
+    "payment_method": "UPI",
+    "payment_ref": "UPI-1774805346724",
+    "status": "CONFIRMED",
+    "qr_used": false,
+    "created_at": "2026-03-29T17:29:06.724Z",
+    "confirmed_at": "2026-03-29T17:29:06.724Z",
+    "delivered_at": null,
+    "cancellation_reason": null,
+    "grace_expires_at": null
+  }
+]

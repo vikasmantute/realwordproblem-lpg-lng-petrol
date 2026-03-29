@@ -1,101 +1,146 @@
 <%- include('../../layout/header') %>
 
 <div class="max-w-4xl mx-auto px-4 py-8">
-  <h1 class="text-2xl font-bold text-slate-800 mb-1">CNG Stations Finder</h1>
-  <p class="text-slate-500 text-sm mb-6">Locate compressed natural gas stations near you</p>
+  <h1 class="text-2xl font-bold text-slate-800 mb-1">CNG Stations</h1>
+  <p class="text-slate-500 text-sm mb-6">Pre-book a slot and skip the queue at CNG stations near you</p>
 
   <% if (crisis && crisis.level >= 3) { %>
   <div class="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6">
     <div class="text-red-700 font-semibold text-sm">⚠️ Crisis Level <%= crisis.level %> — CNG may be restricted</div>
-    <div class="text-red-600 text-xs mt-1">Contact your nearest CNG station before travelling. Queues may be long.</div>
+    <div class="text-red-600 text-xs mt-1">Contact station before travelling. Supply may be limited.</div>
   </div>
   <% } %>
 
-  <!-- Info Notice -->
-  <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-6">
-    <div class="flex items-start gap-3">
-      <div class="text-2xl">🔧</div>
-      <div>
-        <h3 class="font-semibold text-blue-800 text-sm mb-1">CNG Pre-Booking Coming Soon</h3>
-        <p class="text-blue-600 text-xs leading-relaxed">
-          CNG slot pre-booking is currently under development. This module will allow you to pre-book time slots at CNG stations, 
-          avoiding long queue waits. Real-time pressure levels and station capacity will be visible. 
-          Walk-in refueling continues to operate normally at all stations.
-        </p>
-      </div>
-    </div>
+  <!-- Filter Row -->
+  <div class="flex flex-wrap gap-2 mb-6">
+    <span class="text-xs text-slate-500 self-center">Filter:</span>
+    <button onclick="filterStations('all')" id="btn-all"
+      class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-500 text-white transition-colors">All</button>
+    <button onclick="filterStations('High')" id="btn-High"
+      class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-green-100 transition-colors">High Pressure</button>
+    <button onclick="filterStations('Medium')" id="btn-Medium"
+      class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-yellow-100 transition-colors">Medium</button>
+    <button onclick="filterStations('Low')" id="btn-Low"
+      class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibond bg-slate-100 text-slate-600 hover:bg-red-100 transition-colors">Low Pressure</button>
   </div>
 
-  <!-- Static Station List -->
-  <h2 class="text-lg font-semibold text-slate-700 mb-4">Stations in Mumbai</h2>
-  <div class="grid gap-4 sm:grid-cols-2">
-    <%
-    const stations = [
-      { id: 'CNG001', name: 'MGL CNG Station — Andheri East', address: 'MIDC Road, Andheri East, Mumbai', pressure: 'High', queue_min: 15, time: '06:00–22:00', type: 'MGL' },
-      { id: 'CNG002', name: 'MNGL CNG — Bandra West', address: 'SV Road, Bandra West, Mumbai', pressure: 'Medium', queue_min: 30, time: '24 Hours', type: 'MNGL' },
-      { id: 'CNG003', name: 'MGL CNG Station — Goregaon', address: 'WEH Service Road, Goregaon East, Mumbai', pressure: 'Low', queue_min: 55, time: '06:00–23:00', type: 'MGL' },
-      { id: 'CNG004', name: 'IOCL CNG — Jogeshwari', address: 'Link Road, Jogeshwari West, Mumbai', pressure: 'High', queue_min: 20, time: '05:00–23:00', type: 'IOCL' }
-    ];
-    %>
+  <!-- Station Cards -->
+  <div class="grid gap-4 sm:grid-cols-2" id="station-grid">
     <% stations.forEach(s => { %>
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-      <div class="flex items-start justify-between mb-3">
+    <div class="station-card bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden" data-pressure="<%= s.pressure_level %>">
+      <!-- Header -->
+      <div class="p-4 border-b border-slate-100">
+        <div class="flex items-start justify-between mb-1">
+          <div class="font-semibold text-slate-800 text-sm leading-tight"><%= s.name %></div>
+          <span class="flex-shrink-0 ml-2 px-2 py-0.5 rounded-full text-xs font-bold
+            <%= s.pressure_level === 'High' ? 'bg-green-100 text-green-700' : s.pressure_level === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700' %>">
+            <%= s.pressure_level %>
+          </span>
+        </div>
+        <div class="text-xs text-slate-400"><%= s.address %></div>
+        <div class="text-xs text-slate-400 mt-0.5"><%= s.operator %> · PIN <%= s.pin_code %></div>
+      </div>
+
+      <!-- Stock Bar -->
+      <div class="px-4 pt-3">
+        <div class="flex justify-between text-xs mb-1">
+          <span class="text-slate-400">Gas availability</span>
+          <span class="font-semibold <%= s.stock_percent > 60 ? 'text-green-600' : s.stock_percent >= 30 ? 'text-yellow-600' : 'text-red-600' %>">
+            <%= s.stock_percent %>%
+          </span>
+        </div>
+        <div class="h-1.5 rounded-full bg-slate-100">
+          <div class="h-1.5 rounded-full transition-all
+            <%= s.stock_percent > 60 ? 'bg-green-400' : s.stock_percent >= 30 ? 'bg-yellow-400' : 'bg-red-400' %>"
+            style="width:<%= s.stock_percent %>%"></div>
+        </div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="grid grid-cols-3 divide-x divide-slate-100 text-center py-3 mt-2">
         <div>
-          <div class="font-semibold text-slate-800 text-sm"><%= s.name %></div>
-          <div class="text-xs text-slate-400 mt-0.5"><%= s.address %></div>
+          <div class="text-xs text-slate-400">Price</div>
+          <div class="text-sm font-bold text-slate-700">₹<%= s.price_per_kg %>/kg</div>
         </div>
-        <span class="flex-shrink-0 px-2 py-0.5 rounded-full text-xs font-bold
-          <%= s.pressure === 'High' ? 'bg-green-100 text-green-600' : s.pressure === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-600' %>">
-          <%= s.pressure %>
-        </span>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2 mb-3 text-xs">
-        <div class="bg-slate-50 rounded-xl px-3 py-2">
-          <div class="text-slate-400">Est. Wait</div>
-          <div class="font-semibold text-slate-700"><%= s.queue_min %> min</div>
+        <div>
+          <div class="text-xs text-slate-400">Est. Wait</div>
+          <div class="text-sm font-semibold text-slate-700"><%= s.current_queue_min %> min</div>
         </div>
-        <div class="bg-slate-50 rounded-xl px-3 py-2">
-          <div class="text-slate-400">Timing</div>
-          <div class="font-semibold text-slate-700"><%= s.time %></div>
+        <div>
+          <div class="text-xs text-slate-400">Hours</div>
+          <div class="text-xs font-semibold text-slate-700"><%= s.operating_hours.open %>–<%= s.operating_hours.close %></div>
         </div>
       </div>
 
-      <div class="flex gap-2">
+      <!-- Next Slot -->
+      <% if (s.nextSlot) { %>
+      <div class="mx-4 mb-3 bg-green-50 border border-green-100 rounded-xl px-3 py-2 text-xs text-green-700">
+        <span class="font-semibold">Next available:</span> <%= s.nextSlot.formatted %>
+      </div>
+      <% } else { %>
+      <div class="mx-4 mb-3 bg-red-50 border border-red-100 rounded-xl px-3 py-2 text-xs text-red-600">
+        No slots available in the next 3 days
+      </div>
+      <% } %>
+
+      <!-- Actions -->
+      <div class="flex gap-2 px-4 pb-4">
         <a href="https://maps.google.com/?q=<%= encodeURIComponent(s.address) %>" target="_blank"
-          class="flex-1 text-center border border-slate-200 text-slate-600 text-xs font-medium py-2 rounded-xl hover:bg-slate-50 transition-colors">
-          📍 Directions
+          class="flex-shrink-0 border border-slate-200 text-slate-500 text-xs font-medium px-3 py-2 rounded-xl hover:bg-slate-50 transition-colors">
+          📍 Map
         </a>
-        <button disabled class="flex-1 text-center gradient-brand text-white text-xs font-medium py-2 rounded-xl opacity-50 cursor-not-allowed">
-          Pre-book (Soon)
-        </button>
+        <% if (consumer) { %>
+          <% if (s.nextSlot) { %>
+          <a href="/cng/book/<%= s.id %>"
+            class="flex-1 text-center gradient-brand text-white text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-opacity">
+            Pre-book Slot
+          </a>
+          <% } else { %>
+          <button disabled class="flex-1 text-center bg-slate-100 text-slate-400 text-xs font-semibold py-2 rounded-xl cursor-not-allowed">
+            No Slots
+          </button>
+          <% } %>
+        <% } else { %>
+        <a href="/auth/login" class="flex-1 text-center gradient-brand text-white text-xs font-semibold py-2 rounded-xl hover:opacity-90 transition-opacity">
+          Login to Book
+        </a>
+        <% } %>
       </div>
     </div>
     <% }) %>
   </div>
 
-  <!-- CNG FAQ -->
+  <!-- CNG Facts -->
   <div class="mt-8 bg-white rounded-2xl border border-slate-200 p-5">
     <h3 class="font-semibold text-slate-700 mb-4">CNG Quick Facts</h3>
-    <div class="space-y-3 text-sm">
-      <div class="flex gap-3">
-        <span class="text-brand-500 font-bold">₹</span>
-        <div><strong>Current CNG Price:</strong> ₹76.59/kg (Mumbai, subject to change)</div>
-      </div>
-      <div class="flex gap-3">
-        <span class="text-brand-500 font-bold">🌿</span>
-        <div><strong>Environment:</strong> ~30% lower CO₂ vs petrol, zero particulate emissions</div>
-      </div>
-      <div class="flex gap-3">
-        <span class="text-brand-500 font-bold">⚡</span>
-        <div><strong>Fill time:</strong> ~3–8 minutes for standard 4-wheeler CNG kit</div>
-      </div>
-      <div class="flex gap-3">
-        <span class="text-brand-500 font-bold">📞</span>
-        <div><strong>MGL Helpline:</strong> 1800-266-9944 (toll-free)</div>
-      </div>
+    <div class="grid sm:grid-cols-2 gap-3 text-sm">
+      <div class="flex gap-2"><span class="text-brand-500 font-bold text-base">₹</span><div><strong>Current Price:</strong> ₹76.59/kg (Mumbai)</div></div>
+      <div class="flex gap-2"><span class="text-green-500 font-bold text-base">🌿</span><div><strong>Eco:</strong> ~30% lower CO₂ than petrol</div></div>
+      <div class="flex gap-2"><span class="text-blue-500 font-bold text-base">⚡</span><div><strong>Fill time:</strong> ~3–8 min (4-wheeler)</div></div>
+      <div class="flex gap-2"><span class="text-slate-500 font-bold text-base">📞</span><div><strong>MGL Helpline:</strong> 1800-266-9944</div></div>
     </div>
   </div>
 </div>
+
+<script>
+function filterStations(pressure) {
+  document.querySelectorAll('.station-card').forEach(card => {
+    if (pressure === 'all' || card.dataset.pressure === pressure) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('bg-brand-500', 'text-white');
+    btn.classList.add('bg-slate-100', 'text-slate-600');
+  });
+  const active = document.getElementById('btn-' + pressure);
+  if (active) {
+    active.classList.add('bg-brand-500', 'text-white');
+    active.classList.remove('bg-slate-100', 'text-slate-600');
+  }
+}
+</script>
 
 <%- include('../../layout/footer') %>
