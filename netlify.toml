@@ -9,8 +9,9 @@
   NETLIFY      = "true"
 
 [functions]
-  node_bundler   = "zisi"
-  included_files = ["views/**", "data/**", "helpers/**", "middleware/**", "routes/**"]
+  node_bundler          = "esbuild"
+  external_node_modules = ["ejs", "bcryptjs", "qrcode", "uuid", "express-session", "connect-flash", "body-parser"]
+  included_files        = ["../../views/**", "../../data/**"]
 
 [[redirects]]
   from   = "/css/*"
